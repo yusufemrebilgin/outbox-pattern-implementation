@@ -1,0 +1,9 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: notification-service
+
+kafka:
+  brokers: ${KAFKA_BOOTSTRAP_SERVER_HOST}:${KAFKA_BOOTSTRAP_SERVER_PORT}
