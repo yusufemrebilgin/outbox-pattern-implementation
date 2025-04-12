@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "61d88180-efe7-46b9-9fe7-972e54a9acbf",
+		"name": "Outbox Pattern Example",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33271341"
+	},
+	"item": [
+		{
+			"name": "Debezium",
+			"item": [
+				{
+					"name": "Get Connector Config",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8083/connectors/order-outbox-connector",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"order-outbox-connector"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Connector Config",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"order-outbox-connector\",\n  \"config\": {\n    \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\",\n    \"database.hostname\": \"postgres\",\n    \"database.port\": \"5432\",\n    \"database.user\": \"root\",\n    \"database.password\": \"root\",\n    \"database.dbname\": \"order_service\",\n    \"skipped.operations\": \"u,t,d\",\n    \"plugin.name\": \"pgoutput\",\n    \"slot.name\": \"debezium_slot\",\n    \"publication.name\": \"debezium_publication\",\n    \"topic.prefix\": \"order\",\n    \"table.include.list\": \"public.outbox\",\n    \"transforms\": \"unwrap,renameTopic\",\n    \"transforms.unwrap.type\": \"io.debezium.transforms.ExtractNewRecordState\",\n    \"transforms.renameTopic.type\": \"org.apache.kafka.connect.transforms.RegexRouter\",\n    \"transforms.renameTopic.regex\": \"order\\\\.public\\\\.outbox\",\n    \"transforms.renameTopic.replacement\": \"order.events.created\",\n    \"key.converter.schemas.enable\": \"false\",\n    \"value.converter.schemas.enable\": \"false\",\n    \"key.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n    \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8083/connectors/",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Connector Config",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8083/connectors/order-outbox-connector",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"order-outbox-connector"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerName\": \"Michael Scott\",\n    \"customerEmail\": \"mike@example.com\",\n    \"totalPrice\": 4500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/orders",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
